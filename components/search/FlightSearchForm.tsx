@@ -6,7 +6,7 @@ import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { TripType, CabinClass } from '@/lib/flights/types';
-import { Plane, Calendar, ArrowRightLeft } from 'lucide-react';
+import { Plane, Calendar, ArrowRightLeft, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AirportInput } from '@/components/search/AirportInput';
 
@@ -21,6 +21,7 @@ export function FlightSearchForm() {
     const [adults, setAdults] = useState('1');
     const [cabinClass, setCabinClass] = useState<CabinClass>('economy');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -47,6 +48,8 @@ export function FlightSearchForm() {
             setError('Return date cannot be before departure date.');
             return;
         }
+
+        setIsLoading(true);
 
         // Build URL Parameters
         const params = new URLSearchParams();
@@ -189,9 +192,18 @@ export function FlightSearchForm() {
 
                     <div className="flex flex-col items-center mt-6">
                         {error && <p className="text-red-500 text-sm mb-4 bg-red-50 py-2 px-4 rounded-md">{error}</p>}
-                        <Button type="submit" size="lg" className="w-full md:w-auto min-w-[200px] h-14 text-lg font-bold rounded-full shadow-lg hover:shadow-brand-500/25 group">
-                            <Plane className="mr-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                            Search Flights
+                        <Button type="submit" size="lg" disabled={isLoading} className="w-full md:w-auto min-w-[200px] h-14 text-lg font-bold rounded-full shadow-lg hover:shadow-brand-500/25 group">
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                    Searching...
+                                </>
+                            ) : (
+                                <>
+                                    <Plane className="mr-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                                    Search Flights
+                                </>
+                            )}
                         </Button>
                     </div>
                 </form>
